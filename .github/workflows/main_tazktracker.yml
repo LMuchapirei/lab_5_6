@@ -97,12 +97,16 @@ jobs:
 
       - name: npm install, build, and test
         run: |
+          # Build React frontend
           cd src
           npm install
           npm run build
+
+          # Move React build into server/public folder
           cd ../server
           npm install
-          cp -R ../src/build ./public
+          mkdir -p public
+          cp -R ../src/build/* public/
 
       - name: Zip artifact for deployment
         run: |
@@ -122,7 +126,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # This is required for requesting the JWT
+      id-token: write
 
     steps:
       - name: Download artifact from build job
@@ -147,3 +151,4 @@ jobs:
           app-name: 'tazktracker'
           slot-name: 'Production'
           package: release.zip
+
